@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 新生代算法：将内存分为两个空间from to;新分配的对象会被
+    // 放入from空间，当from空间占满，新生代的GC启动
+    // 检查from空间的存活对象并复制到to空间，有失活对象就销毁。
+    // 复制完成后将from空间和to空间互换，完成一个GC
+
+    for (let index = 0; index < 10; index++) {
+  // 各种逻辑
+  console.log(index)
+}
+  </script>
+</body>
+</html>

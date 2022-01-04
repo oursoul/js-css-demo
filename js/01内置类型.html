@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- Object由于不可预知长度是引用类型，分配到堆；基本数据类型分配到栈 -->
+<script>
+  // 1判断一个值是否是null
+  function isNull(any){
+    return !any && typeof any == "object"
+  }
+  console.log(isNull(null))
+
+  // 2类数组转换为数组
+  //Array.prototype.slice.call(arrayLike)
+  //Array.from(arrayLike)
+  
+  // 3.精度损失问题
+  function numbersCloseToEqual(n1,n2){
+    // 引入机械最小值
+    return Math.abs(n1-n2)<Number.EPSILON;
+  }
+  console.log(numbersCloseToEqual(0.1+0.2,0.3)) 
+</script>
+</body>
+</html>

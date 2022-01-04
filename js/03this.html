@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 1 this的设计目的 指向函数执行时所在的环境
+    // 严格模式下,this指向undefined,但不会影响函数的调用
+
+    // 2this的指向
+    // 2.1 函数作为对象的属性，this绑定到对象上
+    // 2.2 call,apply,bind绑定改变this的指向
+    function foo(){
+      console.log(this.name)
+    }
+    var obj = {
+      name:'obj'
+    }
+    var obj2 = {
+      name:'obj2'
+    }
+    var name = 'obj-window'
+    // 多次绑定call方法以第一次的为准，且会报错
+    foo.call(obj)
+    // 不传递或者传递null,undefined默认全局对象
+    foo.call()
+    // 2.3 箭头函数的this是外层作用域，且被绑定后无法修改
+    function foo2(){
+      return (name2)=>{
+        console.log(this.name2);
+      }
+    }
+    var obj3 = {name2:'obj3'}
+    var name2 = 'name2-win'
+    var _foo2 = foo2()
+    _foo2()
+    var _foo3 = foo2.call(obj3)
+    _foo3()
+
+
+  </script>
+</body>
+</html>

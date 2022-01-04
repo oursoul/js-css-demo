@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 1.new的过程：新生成一个对象，链接对象到原型，绑定this，返回新对象
+    function _new(){
+      let obj = {}
+      // 获取构造函数
+      let _constructor = [].shift.call(arguments)
+      // 设置空对象的原型
+      obj.__proto__ = _constructor.prototype
+      // 绑定this执行构造函数
+      let res = _constructor.apply(obj,arguments)
+      // 确保返回值为对象
+      return res instanceof Object?res:obj;
+    } 
+
+  </script>
+</body>
+</html>

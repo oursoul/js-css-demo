@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 安装babel相关工具yarn add babylon babel-traverse babel-core babel-preset-env  
+    const fs = require('fs')
+    const path = require('path')
+    const babylon = require('babylon')
+    const traverse = require('babel-traverse').default
+    const {transformFromAst} = require('babel-core')
+
+    // 使用babel转换代码
+    function readCode(filePath){
+      // 读取文件内容
+      const content = fs.readFileSync(filePath,'utf-8')
+      // 利用babylon解析代码生成 AST，分析代码是否引入其他文件
+      const ast = babylon.parse(content,{
+        sourceType:'module'
+      })
+      // 寻找当前文件的依赖关系
+      const dependencies = []
+      traverse(ast,{
+        ImportDeclaration:({node})=>{
+          dependencies.push(node.source.value)
+        }
+      })
+      // 通过AST 将代码转为es5
+      const {code} = transformFromAst(ast,null,{
+        presets:['env']
+      })
+      return{
+        filePath,
+        dependencies,
+        code
+      }
+    }
+    // 调用readCode函数，传入入口文件、分析入口文件的依赖、识别JS和CSS
+    function getDependencies(entry){
+      // 读取入口文件
+      const entryObject = readCode(entry)
+      // 新建一个数组，存储代码中涉及到的所有文件
+      const dependencies = [entryObject]
+      // 遍历所有文件的依赖关系
+      for(const asset of dependencies){
+        // 获得文件目录
+        const dirname = path.dirname(asset.filePath)
+        // 遍历当前文件依赖关系
+        asset.dependencies.forEach(relativePath=>{
+          // 获得绝对路径
+          const absolutePath = path.join(dirname,relativePath)
+          // CSS文件不需要用babel编译，逻辑就是将代码插入到style标签中
+          if(/\.css$/.test(absolutePath)){
+            const content = fs.readFileSync(absolutePath,'utf-8')
+            // 将代码插入head后
+            const code = `
+             const style= document.createElement('style')
+             style.innerText = ${JSON.stringify(content).replace(/\\r\\n/g,'')}
+             document.head.appendChild(style)
+            `
+            dependencies.push({
+              filePath:absolutePath,
+              relativePath,
+              dependencies:[],
+              code
+            })
+          }else{
+            // js代码需要继续查找是否有依赖关系
+            const child = readCode(absolutePath)
+            child.relativePath = relativePath
+            dependencies.push(child)
+          }
+        })
+      }
+      return dependencies
+    }
+// 实现打包函数,es6模块化代码转换为commonJS,但浏览器不支持commonjs
+// 我们需要自己实现commonjs相关代码
+function bundle(dependencies,entry){
+  let modules = ''
+  // 构建函数参数，结构为
+  // {'./entry.js':function(module,exports,require){...}}
+  dependencies.forEach(dep=>{
+    const filePath = dep.relativePath || entry
+    modules += `${filePath}:(function(module,exports,require){${dep.code}})`
+  })
+  // 构建require获取模块暴露出来的内容
+  const result = `(function(modules){
+    function require(id){
+      const module = {exports:{}}
+      modules[id](module,module.exports,require)
+      return module.exports
+    }
+    require('${entry}')
+  })({${modules}})`
+  // 生成的内容写入到文件中
+  fs.writeFileSync('./budle.js',result)
+}
+
+// 打包工具的核心原理
+// 找到入口文件所有的依赖关系
+// 构建Commonjs代码获取exports导出的内容
+
+  </script>
+</body>
+</html>

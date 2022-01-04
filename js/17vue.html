@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+
+  </div>
+  <script>
+ 
+//  1.监听数据的set和get
+    // function observe(obj){
+    //   if(!obj || typeof obj != 'object')return
+    //   Object.keys(obj).forEach(key=>{
+    //      defineReactive(obj,key,obj[key])
+    //   })
+    // }
+    // function defineReactive(obj,key,val){
+    //   // 递归子属性
+    //   observe(val)
+    //   Object.defineProperty(obj,key,{
+    //     // 可枚举
+    //     enumerable:true,
+    //     // 可配置
+    //     configurable:true,
+    //     // 自定义函数
+    //     get:function(){
+    //       console.log('get value');
+    //       return val
+    //     },
+    //     set:function(newVal){
+    //       console.log('change value');
+    //       val = newVal
+    //     }
+    //   })
+    // }
+    // var data = {name:'jack'}
+    // observe(data)
+    // let name = data.name
+    // data.name = 'harry'
+
+    // 还不够,自定义函数一开始不会执行(?),需要先依赖手机,属性更新的时候派发更新
+
+
+    //2.依赖收集与派发更新
+
+ function observe(obj){
+      if(!obj || typeof obj != 'object')return
+      Object.keys(obj).forEach(key=>{
+         defineReactive(obj,key,obj[key])
+      })
+    }
+
+    // 解耦属性的依赖收集和派发更新
+    class Dep{
+      constructor(){
+        this.subs = []
+      }
+      // 添加依赖
+      addSub(sub){
+        this.subs.push(sub)
+      }
+      // 更新
+      notify(){
+        this.subs.forEach(sub=>{
+          sub.update()
+        })
+      }
+    }
+    // 全局属性,通过该属性配置watcher
+    Dep.target = null
+    
+    // Vue组件挂载时添加响应式的过程:
+    // 组件挂载对所有有需要的属性调用Object.defineProperty(),
+    // 实例化watcher,传入组件更新的回调
+    // 实例化过程中,会对模板中的属性进行求值,触发依赖收集
+
+    class Watcher{
+      constructor(obj,key,cb){
+        // Dep.target 指向自己
+        // 触发属性的getter添加监听
+        // Dep.target置空
+        Dep.target = this
+        this.cb = cb
+        this.obj = obj
+        this.key = key
+        this.value = obj[key]
+        Dep.target = null
+
+      }
+      update(){
+        // 获得新值
+        this.value = this.obj[this.key]
+        // 调用update方法更新Dom
+        this.cb(this.value)
+      }
+    }
+
+    // 自定义函数defineReactive
+    function defineReactive(obj,key,val){
+      // 递归子属性
+      observe(val)
+      let dp = new Dep()
+      Object.defineProperty(obj,key,{
+        enumerable:true,
+        configurable:true,
+        get:function(){
+          console.log('get value');
+          // 将Watch添加到订阅
+          if(Dep.target){
+            dp.addSub(Dep.target)
+          }
+          return val
+        },
+        set:function(newVal){
+          console.log('change value');
+          val = newVal
+          // 执行watcher的update方法
+          dp.notify()
+        }
+      })
+    }
+
+var data = { name: 'yck' }
+observe(data)
+function update(value) {
+  document.querySelector('div').innerText = value
+}
+// 模拟解析到 `{{name}}` 触发的操作
+new Watcher(data, 'name', update)
+// update Dom innerText
+data.name = 'yyy' 
+var data1 = [1,2,3]
+observe(data1)
+// 当利用索引直接设置一个数组项时
+// 当你修改数组的长度时,vue无法检测到变动
+new Watcher(data1,0,update)
+
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box1{
+      margin:0 auto;
+      width:50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #8e806b;
+      animation: wave 4s linear infinite;
+    }
+    @keyframes wave { 
+    0% { 
+        box-shadow: 0 0 0 0 rgba(245, 226, 226, 1), 0 0 0 0 rgba(250, 189, 189, 1); 
+    } 
+    50% { 
+        box-shadow: 0 0 0 20px rgba(245, 226, 226, .5), 0 0 0 0 rgba(250, 189, 189, 1); 
+    } 
+    100% { 
+        box-shadow: 0 0 0 40px rgba(245, 226, 226, 0), 0 0 0 20px rgba(245, 226, 226, 0); 
+    } 
+} 
+  </style>
+  <style>
+    .box2{
+      margin:40px auto;
+      width: 30px;height: 30px;border-radius: 50%;animation: load 3s linear infinite;  background-color: transparent; 
+    }
+    @keyframes load {
+      0% { 
+        box-shadow: -40px 0 0 rgba(250, 189, 189, 0), 
+                    inset 0 0 0 15px rgba(250, 189, 189, 0), 
+                    40px 0 0 rgba(250, 189, 189, 0); 
+    } 
+    30% { 
+        box-shadow: -40px 0 0 rgba(250, 189, 189, 1), 
+                    inset 0 0 0 15px rgba(250, 189, 189, 0), 
+                    40px 0 0 rgba(250, 189, 189, 0); 
+    } 
+    60% { 
+        box-shadow: -40px 0 0 rgba(250, 189, 189, 0), 
+                    inset 0 0 0 15px rgba(250, 189, 189, 1), 
+                    40px 0 0 rgba(250, 189, 189, 0); 
+    } 
+    100% { 
+        box-shadow: -40px 0 0 rgba(250, 189, 189, 0), 
+                    inset 0 0 0 15px rgba(250, 189, 189, 0), 
+                    40px 0 0 rgba(250, 189, 189, 1); 
+    } 
+      
+    }
+  </style>
+
+  <style>
+    .box3{
+      margin: 20px auto;
+      width:200px;
+      height:80px;
+      background-color: #fee3ec;
+      border-radius: 8px;
+      position: relative;
+      /* box-shadow: 2px 2px 2px rgba(0,0,0,.8); */
+      /* filter的阴影距离更小，色值要更深 */
+      filter: drop-shadow(2px 2px 2px rgba(0,0,0,.8)) 
+    }
+    .box3::before{
+      content:'';
+      display:inline-block;
+      position:absolute;
+      top:12px;
+      left:-18px;
+      width:0;
+      height: 0;
+      border:10px solid transparent;
+      border-right-color:#fee3ec;
+    }
+  </style>
+  <style>
+    .box4{filter:blur(0px)}
+  </style>
+  <style> 
+    .br-31{ 
+      width: 100px; 
+      height: 100px; 
+      border-radius: 50%; 
+      background: linear-gradient(to right,#f6c 50%,#333 0); 
+    } 
+    .br-31::before{ 
+      content: ''; 
+      display: block; 
+      margin-left: 50%; 
+      height: 100%; 
+      border-radius: 0 100% 100% 0 / 50%; 
+      background-color: #f6c; 
+      transform-origin: left; 
+      animation: skin 4s linear infinite, 
+                 bg 8s step-end infinite; 
+    } 
+    @keyframes skin{ 
+      to{ 
+        transform: rotate(.5turn); 
+      } 
+    } 
+    @keyframes bg{ 
+      50%{ 
+        background: #333; 
+      } 
+    } 
+    .br-32::before{ 
+      animation-play-state: paused; 
+      animation-delay: inherit; 
+    } 
+  </style> 
+<!-- <style> 
+  .check-wrap{ 
+      text-align: center; 
+  } 
+  .checkbox{ 
+      position: absolute; 
+      clip: rect(0,0,0,0); 
+  } 
+  .checkbox[type="checkbox"]:focus + label::before{ 
+      box-shadow: 0 0 .6em #06c; 
+  } 
+  .checkbox[type="checkbox"] + label::before{ 
+      content: '\a0'; /* 不换行空格 */ 
+      display: inline-block; 
+      margin-right: .3em; 
+      width: 2em; 
+      height: 2em; 
+      border-radius: .3em; 
+      vertical-align: middle; 
+      line-height: 2em; /* 关键 */ 
+      font-size: 20px; 
+      text-align: center; 
+      color: #fff; 
+      background: gray; 
+  } 
+  .checkbox[type="checkbox"]:checked + label::before{ 
+      content: '\2713'; /* 对勾 */ 
+      background: black; 
+  } 
+   
+  label{ 
+      margin-right: 40px; 
+      font-size: 20px; 
+  } 
+  </style>  -->
+</head>
+<body>
+  <!-- 水波纹动画 -->
+  <div class="box1">
+  </div>
+  <!-- load动画 -->
+  <div class="box2">
+  </div>
+  <!-- 对话框 -->
+  <div class="box3">
+  </div>
+  <!-- 模糊 -->
+  <img class="box4" src="https://cdnmusic.migu.cn/picture/2021/1230/2335/ASc0f118a1bbf68885f072552d478fa8f6.jpg" alt="">
+  
+  <!-- 饼图动画 -->
+  <div class="br-31 black-theme"></div> 
+  <div class="br-31 br-32 black-theme" style="animation-delay:-1s"></div>
+
+  <!-- 自定义复选框 -->
+
+ <!-- <div class="check-wrap"> 
+    <input type="checkbox" class="checkbox" id="check-1" /> 
+    <label for="check-1">生男孩</label> 
+    <input type="checkbox" class="checkbox" id="check-2" /> 
+    <label for="check-2">生女孩</label> 
+</div>  -->
+
+<style>
+.box5{line-height: 1.8;}
+.box5 input[type='checkbox']{opacity: 0;position: absolute;}
+.box5 label{user-select: none}
+.box5 input[type='checkbox'] + label::before{content: '\a0';display: inline-block;
+width: 40px;  color: #fff; text-align: center;cursor: pointer;margin-right: 1rem ;;height: 40px;border-radius: 6px;background-color: gray;line-height: 40px;}
+.box5 input[type='checkbox']:checked + label:before{content: '\2713';background: black;}
+.box5 input[type="checkbox"]:focus + label:before{ 
+      box-shadow: 0 0 .6em #06c; 
+} 
+
+</style>
+ <!-- 自定义复选框 -->
+<div class="box5">
+  <input type="checkbox" id="boy">
+  <label for="boy">boy</label>
+</div>
+
+<style>
+  .box6 input[type="checkbox"]{opacity: 0;}
+  .box6 input[type="checkbox"] + label{
+    display: inline-block;
+    border-radius: 2.25rem;
+    width:5rem;
+    height:2rem;
+    position: relative;
+    border: 2px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  .box6 input[type="checkbox"] + label::after{
+    content:'';
+    display: inline-block;
+    width:1.9rem;
+    height:1.9rem;
+    position: absolute;
+    top:1px;left:1px;
+    border-radius: 50%;
+    background-color: #ef426f;
+    transition: left .3s;
+    
+  }
+  .box6 input[type="checkbox"]:checked + label::after{
+    left:3rem;
+  }
+</style>
+<div class="box6">
+  <input type="checkbox" id="switch"/>
+  <label for="switch"></label>
+</div>
+</body>
+</html>

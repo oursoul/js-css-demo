@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 1遇到异步代码，将该部分代码挂起需要执行的时候加入任务队列，
+    // 一旦执行栈为空，event loop拿出需要执行的代码放入执行栈中，
+
+    // 2event loop执行顺序
+    // 2.1执行同步代码，宏任务
+    // 2.2执行栈为空，查询是否有异步代码要执行
+    // 2.3执行所有微任务
+    // 2.4如有必要，渲染页面
+    // 2.5开始下一轮的event loop ,执行宏任务
+    console.log('script start')
+
+async function async1() {
+  await async2()
+  console.log('async1 end')
+}
+async function async2() {
+  console.log('async2 end')
+}
+async1()
+
+setTimeout(function() {
+  console.log('setTimeout')
+}, 0)
+
+new Promise(resolve => {
+  console.log('Promise')
+  resolve()
+})
+  .then(function() {
+    console.log('promise1')
+  })
+  .then(function() {
+    console.log('promise2')
+  })
+
+console.log('script end')
+  </script>
+</body>
+</html>

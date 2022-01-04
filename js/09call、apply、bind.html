@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function fruits() {}
+ fruits.prototype = {
+     color: "red",
+     say: function() {
+         console.log("My color is " + this.color );
+         console.log(...arguments);
+     }
+ }
+ var apple = new fruits;
+ apple.say();    //My color is red
+
+ var banana = {
+   color:'yellow'
+ }
+ apple.say.call(banana)
+
+//  1.手写call
+Function.prototype.myCall = function(ctx){
+  if(typeof this != 'function'){
+    throw new TypeError('error')
+  }
+  // ctx可选参数如果不传递默认window
+   ctx = ctx || window
+  //  this指向需要执行的函数
+  // console.log(this)
+  // 创建一个fn属性，设置为需要调用的函数
+  ctx.fn = this
+  // 参数剥离
+  const args = [...arguments].slice(1)
+  const res = ctx.fn(...args)
+  delete ctx.fn
+  return res
+}
+apple.say.myCall(banana,'test','test2')
+
+// 2 手写apply
+Function.prototype.myApply = function(ctx){
+  if(typeof this != 'function'){
+    throw new TypeError('error')
+  }
+  ctx = ctx || window
+  ctx.fn = this
+  let res;
+  // 处理参数和call有区别
+  if(arguments[1]){
+    res = ctx.fn(...arguments[1])
+  }else{
+    res = ctx.fn()
+  }
+  delete ctx.fn
+  return res
+}
+
+apple.say.myApply(banana,['test1','test2'])
+
+// 3手写bind，需要返回一个函数(较难理解)
+ Function.prototype.myBind = function(ctx){
+   if(typeof this != 'function'){
+     throw new TypeError('ERROR')
+   }
+   let _this = this
+   const args = [...arguments].slice(1)
+  //  返回一个函数
+  return function F(){
+    // 考虑到new的情况
+    if(this instanceof F){
+      // 因为 bind 可以实现类似这样的代码 f.bind(obj, 1)(2)
+      return new _this(...args,...arguments)
+    }
+    return _this.apply(ctx,args.concat(...arguments))
+  }
+ }
+
+ var apple1 = apple.say.myBind(banana,'test','test2')
+//  new apple1()
+apple1()
+ 
+
+
+  </script>
+</body>
+</html>

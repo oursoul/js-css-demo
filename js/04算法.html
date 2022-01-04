@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 1.大数相加
+    function bigNumberSum(a, b) {
+  // 123456789
+  // 000009876
+  var a='' + a
+  var b = '' + b
+  let cur = 0;
+  while (cur < a.length || cur < b.length) {
+    if (!a[cur]) {
+      a = "0" + a;
+    } else if (!b[cur]) {
+      b = "0" + b;
+    }
+    cur++;
+  }
+  console.log(a,b);
+  let carried = 0;
+  const res = [];
+
+  for (let i = a.length - 1; i > -1; i--) {
+    // 前面添加 + 变为数值
+    const sum = carried + +a[i] + +b[i];
+    if (sum > 9) {
+      carried = 1;
+    } else {
+      carried = 0;
+    }
+    res[i] = sum % 10;
+  }
+  if (carried === 1) {
+    res.unshift(1);
+  }
+
+  return res.join("");
+}
+    function myBigNumberSum(a,b){
+      var curr = 0;
+      while(curr<a.length || curr<b.length){
+        if(!a[curr]){
+          a = '0'+ a
+        }else if(!b[curr]){
+          b = '0' + b
+        }
+        curr++
+      }
+      console.log(a,b);
+      var flag = 0;
+      var sum = [];
+      var temp = 0;
+      for(var i=a.length-1;i>-1;i--){
+        temp = (parseInt(a[i]) + parseInt(b[i]))%10 + flag
+        if(parseInt(a[i])+parseInt(b[i])>=10){
+          flag = 1
+        }else{
+          flag = 0
+        }
+        sum.unshift(temp)
+        console.log(sum);
+      }
+      if(flag == 1){
+        sum.unshift(1)
+      }
+      return sum.join('')
+    } 
+    //    123466665
+   console.log(myBigNumberSum('123456789','9876')); 
+
+    // 2.手写bind
+    Function.prototype.myBind = function(ctx,...args){
+      return (...innerArgs)=>this.call(ctx,...args,...innerArgs)
+    }
+    var a = {
+      name : 'jack'
+    }
+    function test(...msg){
+      console.log(this.name,...msg);
+    }
+    const testBind = test.myBind(a,'hello','world')
+    testBind('innerArgs')
+
+    // 3.柯里化,多个参数的一个函数转换成一个参数的函数
+    function curry(fn, args) {
+    var length = fn.length;
+    args = args || [];
+    return function() {
+        var _args = args.slice(0),
+            arg, i;
+        for (i = 0; i < arguments.length; i++) {
+            arg = arguments[i];
+            _args.push(arg);
+        }
+        if (_args.length < length) {
+            return curry.call(this, fn, _args);
+        }
+        else {
+            return fn.apply(this, _args);
+        }
+    }
+}
+  var fn = curry(function(a, b, c) {
+      console.log(a+b+c);
+  });
+    var b = fn(1,2)
+    b(2)
+    fn(1, 2, 3) // 6
+    fn(1, 2)(3) // 6
+    fn(1)(2)(3) // 6
+    fn(1)(2, 3) // 6
+
+    // 4.深拷贝
+    function deepCopy(o) {
+  if (typeof o !== "object") return o;
+  let n;
+  if (Array.isArray(o)) {
+    n = new Array(o.length);
+    o.forEach((v,i) => (n[i] = deepCopy(v)));
+  }
+  // reg math function 等其他类型暂时不考虑
+  else if (!Array.isArray(o)) {
+    n = {};
+    Object.keys(o).forEach(key => {
+      n[key] = deepCopy(o[key]);
+    });
+  }
+  return n;
+}
+const a = {
+  a: [
+    1,
+    [4],
+    {
+      a: {
+        c: [4]
+      }
+    }
+  ]
+}
+const b = deepCopy(a);
+a.c = "c";
+console.log(a);
+console.log(b);
+console.log(a.c);
+console.log(b.c);
+
+// 5.扁平化数组
+function flatten(list) {
+  if (list.length === 0) return [];
+  const head = list[0];
+  if (head instanceof Array) {
+    list[0] = flatten(head);
+  } else {
+    list[0] = [list[0]];
+  }
+  return list[0].concat(flatten(list.slice(1)));
+}
+
+function flattenDepth(list, n) {
+  if (list.length === 0) return [];
+  if (n === 0) return list;
+  const head = list[0];
+  if (head instanceof Array) {
+    list[0] = flattenDepth(head, n - 1);
+  } else {
+    list[0] = [list[0]];
+  }
+  return list[0].concat(flattenDepth(list.slice(1), n));
+}
+// test
+const a = flatten([1, 2, [3, [4, 5, [6, [7, 8]]]]]);
+console.log(a);
+const b = flattenDepth([1, 2, [3, [4, 5, [6, [7, 8]]]]], 2);
+console.log(b);
+const c = flattenDepth([1, 2, [3, [4, 5, [6, [7, 8]]]]], Number.MAX_VALUE);
+console.log(c);
+
+// 6获取url的参数
+
+// 给定key，求解href中的value，如果有多个，返回数组。如果没有返回null
+function getUrlParams(key, href) {
+  const query = href.split("?");
+  if (query.length <= 1) return null;
+  // a=1&b=2&a=3
+  const pairs = query[1].split("&");
+  const res = pairs
+    .filter(pair => {
+      const [k] = pair.split("=");
+      if (k === key) return true;
+      return false;
+    })
+    .map(pair => {
+      const [, v] = pair.split("=");
+      return v;
+    });
+  if (res.length === 0) return null;
+  if (res.length === 1) return res[0];
+  return res;
+}
+
+const a = getUrlParams("a", "http://lucifer.ren?a=1&b=2&a=3");
+const b = getUrlParams("b", "http://lucifer.ren?a=1&b=2&a=3");
+const c = getUrlParams("c", "http://lucifer.ren?a=1&b=2&a=3");
+
+console.log(a);
+console.log(b);
+console.log(c);
+
+// 7 响应式原理
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 1.jsonp，利用script标签无跨域限制，通过script指向一个需要访问的地址并返回一个回调函数
+    // 能会遇到多个 JSONP 请求的回调函数名是相同的，这时候就需要自己封装一个 JSONP
+    function jsonp(url,jsonpCallback,success){
+    let script = document.createElement('script')
+    script.src = url
+    script.async = true
+    script.type = 'text/javascript'
+    window[jsonpCallback] = function(data){
+      success && success(data)
+    }
+    document.body.appendChild(script)
+  }
+  async function testJsonp(){
+    const res1 = await jsonp('https://sug.so.360.cn/suggest?callback=getInfo&encodein=utf-8&encodeout=utf-8&format=json&fields=word&word="test"','getInfo',function(value){console.log(value)})
+    console.log(window['getInfo'])
+    const res2 = await jsonp('https://sug.so.360.cn/suggest?callback=getInfo&encodein=utf-8&encodeout=utf-8&format=json&fields=word&word="school"','getInfo',function(value){console.log(value)})
+  }
+  testJsonp()
+  
+  // 2.cors
+  // 服务端设置Access-Control-Allow-origin表示哪些域名可以访问资源
+
+  // 2.1简单请求Get,head,post,Content-Type：text/plain multipart/form-data application/x-www-form-urlencoded
+  // 2.2复杂请求，会发送一个预请求，options方法，后端（若是node）需要过滤option方法，res.stateCode = 204 res.setHeader('Content-Length',0) ,res.end()
+
+  // 3document.domain，二级域名相同就可以实现跨域，在前端页面设置
+  // document.domain = 'test.com'
+  // 比如a.test.com和b.test.com
+
+  // 4.postMessage获取内嵌页面中第三方页面数据
+  // 发送消息
+  // window.parent.postMessage('message','http://test.com')
+  // 接受消息
+  // var mc = new MessageChannel()
+  // mc.addeventListener('message',event=>{
+  //   var origin = event.origin || event.originalEvent.origin
+  //  判断来源并接收消息
+  //   if(origin == 'http://test.com'){
+  //     console.log('验证通过')
+  //   }
+  // })
+
+
+  </script>
+</body>
+</html>

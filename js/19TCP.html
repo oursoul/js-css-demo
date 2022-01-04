@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 1 UDP面向无连接,不保证数据有序且不丢失的传递到对端,无控制
+    // 流量的算法,相对于TCP更加轻便
+
+    // 2 过程:应用层将数据传递给传输层的UDP协议,增加UDP头标识
+    // 网络层将数据传递到传输层,UDP去除IP报文头就传递给应用层
+
+    // 缺点:通信不需要建立连接,这种情况不可靠;传递数据容易丢包
+    // 优点:高效,应用在实时性很高的场景,对于直播用户关心的是最新的
+    // 画面,而不是因为网络条件差丢失的老画面;而TCP会严格控制传输的正确性
+    // 一旦有某个数据对端没有收到,就会停止下来直到对端收到数据
+
+    
+  </script>
+</body>
+</html>
